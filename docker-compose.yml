@@ -1,41 +1,50 @@
-nginx:
-  container_name: nginx
-  image: nginx:1.11.5
-  volumes:
-    - ./nginx/logs:/var/log/nginx
-    - ./nginx/certs:/etc/nginx/certs
-    - ./nginx/conf.d:/etc/nginx/conf.d
-  ports:
-    - "8080:80"
-    - "4443:443"
-  links:
-    - ghost
-  restart: always
+version: "2"
 
-ghost:
-  container_name: ghost
-  volumes:
-    - ./ghost:/var/lib/ghost
-  image: ghost:0.11.2
-  expose:
-    - "2368" # makes it reachable by linked services but unreachable from host for security
-  environment:
-    #- NODE_ENV=production
-    - "WEB_DOMAIN=blog.infinit.sh"
-    #- DB_DATABASE=THE_DB_NAME
-    #- DB_USER=THE_DB_USER
-    #- "DB_PASSWORD=THE_DB_PASSWORD"
-    #- "EMAIL_SERVICE=Mailgun" # SMTP service
-    #- "EMAIL_USER=THE_MAILGUN_POSTMASTER_EMAIL_ADDRESS" # provided by the mail service provider for sending via SMTP
-    #- "EMAIL_PASSWORD=THE_MAILGUN_PASSWORD"
-    #- "S3_ACCESS_KEY_ID=THE_S3_USER_ACCESS_KEY"
-    #- "S3_ACCESS_SECRET_KEY=THE_S3_ACCESS_SECRET_KEY"
-    #- "S3_BUCKET_NAME=THE_S3_BUCKET_NAME"
-    #- "S3_BUCKET_REGION=THE_REGION"
-    #- "S3_ASSET_HOST_URL=THE_CLOUDFRONT_HTTPS_DOMAIN_WITH_SLASH"
-  restart: always
-  #links:
-  #  - mysql
+services:
+  nginx:
+    container_name: nginx
+    image: nginx:1.11.5
+    volumes:
+      - ./nginx/logs:/var/log/nginx
+      - ./nginx/certs:/etc/nginx/certs
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    ports:
+      - "8080:80"
+      - "4443:443"
+    links:
+      - ghost
+    restart: always
+
+  ghost:
+    container_name: ghost
+    volumes:
+      - ./ghost/themes:/var/lib/ghost/themes
+      - ./ghost/data:/var/lib/ghost/data
+      - ghost-volume:/var/lib/ghost/images
+    image: ghost:0.11.2
+    expose:
+      - "2368" # makes it reachable by linked services but unreachable from host for security
+    environment:
+      #- NODE_ENV=production
+      - "WEB_DOMAIN=blog.infinit.sh"
+      #- DB_DATABASE=THE_DB_NAME
+      #- DB_USER=THE_DB_USER
+      #- "DB_PASSWORD=THE_DB_PASSWORD"
+      #- "EMAIL_SERVICE=Mailgun" # SMTP service
+      #- "EMAIL_USER=THE_MAILGUN_POSTMASTER_EMAIL_ADDRESS" # provided by the mail service provider for sending via SMTP
+      #- "EMAIL_PASSWORD=THE_MAILGUN_PASSWORD"
+      #- "S3_ACCESS_KEY_ID=THE_S3_USER_ACCESS_KEY"
+      #- "S3_ACCESS_SECRET_KEY=THE_S3_ACCESS_SECRET_KEY"
+      #- "S3_BUCKET_NAME=THE_S3_BUCKET_NAME"
+      #- "S3_BUCKET_REGION=THE_REGION"
+      #- "S3_ASSET_HOST_URL=THE_CLOUDFRONT_HTTPS_DOMAIN_WITH_SLASH"
+    restart: always
+    #links:
+    #  - mysql
+
+volumes:
+  ghost-volume:
+    driver: infinit
 
 #mysql:
 #  container_name: blog_data
