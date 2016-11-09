@@ -23,7 +23,7 @@ services:
       - ghost-volume:/var/lib/ghost/images
     image: ghost:0.11.2
     expose:
-      - "2368" # makes it reachable by linked services but unreachable from host for security
+      - "2368"
     environment:
       #- NODE_ENV=production
       - "WEB_DOMAIN=blog.infinit.sh"
@@ -39,22 +39,8 @@ services:
       #- "S3_BUCKET_REGION=THE_REGION"
       #- "S3_ASSET_HOST_URL=THE_CLOUDFRONT_HTTPS_DOMAIN_WITH_SLASH"
     restart: always
-    #links:
-    #  - mysql
 
 volumes:
   ghost-volume:
-    driver: infinit
-
-#mysql:
-#  container_name: blog_data
-#  image: mysql:5.7.15
-#  expose:
-#    - "3306"
-#  environment:
-#    # beware of special characters in password that can be interpreted by shell
-#    - "MYSQL_ROOT_PASSWORD=THE_ROOT_DB_PASSWORD"
-#    - MYSQL_DATABASE=THE_DB_NAME
-#    - MYSQL_USER=THE_DB_USER
-#    - "MYSQL_PASSWORD=THE_DB_PASSWORD"
-#  restart: always
+    external:
+      name: gaetan/ghost-volume
